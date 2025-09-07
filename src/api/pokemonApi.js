@@ -1,9 +1,10 @@
 // src/api/pokemonApi.js
 import axios from 'axios';
+import dummyData from './dummyAPi';
 
 export const getRandomPokemons = async (count = 8) => {
     try {
-        // Step 1: Get total number of pokemons
+        // Step 1: Get total number of pokemons from API
         const totalRes = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=1');
         const totalCount = totalRes.data.count;
 
@@ -29,7 +30,8 @@ export const getRandomPokemons = async (count = 8) => {
         return pokemons;
 
     } catch (error) {
-        console.error('Error fetching random pokemons:', error);
-        return [];
+        console.warn('API fetch failed, using dummy data');
+        // Fallback to dummy data
+        return dummyData.sort(() => 0.5 - Math.random()).slice(0, count);
     }
 };
