@@ -2,36 +2,41 @@
 import axios from 'axios';
 import dummyData from './dummyAPi';
 
-export const getRandomPokemons = async (count = 8) => {
-    try {
-        // Step 1: Get total number of pokemons from API
-        const totalRes = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=1');
-        const totalCount = totalRes.data.count;
 
-        // Step 2: Generate random unique IDs
-        const ids = new Set();
-        while (ids.size < count) {
-            const randomId = Math.floor(Math.random() * totalCount) + 1;
-            ids.add(randomId);
+const fetchPokemonById = async (id) => {
+    try {
+        const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        const data = res.data;
+        return {
+            id: data.id,
+            name: data.name,
+            image: data.sprites.other['official-artwork'].front_default
+        };
+    } catch (error) {
+        return null;
+    }
+};
+
+export const getRandomPokemons = async (count = 8) => {
+    const pokemons = [];
+
+    try {
+        // Try fetching from API
+        for (let i = 0; i < count; i++) {
+            const randomId = Math.floor(Math.random() * 1000) + 1;
+            const pokemon = await fetchPokemonById(randomId);
+            if (pokemon) pokemons.push(pokemon);
         }
 
-        // Step 3: Fetch pokemon details for each ID
-        const promises = Array.from(ids).map(async (id) => {
-            const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
-            const data = res.data;
-            return {
-                id: data.id,
-                name: data.name,
-                image: data.sprites.other['official-artwork'].front_default
-            };
-        });
+        // If we could not fetch enough, fallback to dummy
+        if (pokemons.length < count) {
+            console.warn('Using dummy data due to partial API failures');
+            return dummyData.sort(() => 0.5 - Math.random()).slice(0, count);
+        }
 
-        const pokemons = await Promise.all(promises);
         return pokemons;
-
     } catch (error) {
         console.warn('API fetch failed, using dummy data');
-        // Fallback to dummy data
         return dummyData.sort(() => 0.5 - Math.random()).slice(0, count);
     }
 };
