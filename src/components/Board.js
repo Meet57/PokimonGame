@@ -13,17 +13,15 @@ const Board = () => {
 
     return (
         <div className="flex flex-col items-center w-full">
-            {/* Game Info */}
-            <div className="flex justify-between w-full mb-4 px-4">
+            <div className="flex flex-col sm:flex-row justify-between w-full mb-4 px-2 sm:px-4">
                 <p className="text-lg font-semibold">⏱️ Time: {timer}s</p>
                 <p className="text-lg font-semibold">🎯 Moves: {moves}</p>
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-4 gap-4 place-items-center">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-3 sm:gap-4 place-items-center">
                 {cards.map((card, index) => (
                     <Tile
-                        key={card.id}
+                        key={card.id + '-' + index}
                         card={card}
                         isFlipped={selectedCards.includes(index) || matchedCards.includes(index)}
                         onClick={() => flipCard(index)}
