@@ -1,14 +1,34 @@
 // src/components/Board.js
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGame } from '../context/GameContext';
 import Tile from './Tile';
 
 const Board = () => {
     const { cards, selectedCards, matchedCards, flipCard, startGame, timer, moves } = useGame();
 
+    const [showHackerMode, setShowHackerMode] = useState(false);
+
     useEffect(() => {
         startGame();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
+        const handleKeyDown = (e) => {
+            if (e.key.toLowerCase() === 'h') {
+                setShowHackerMode(true); // toggle hacker mode
+            }
+        };
+
+        const handleKeyUp = (e) => {
+            if (e.key.toLowerCase() === 'h') {
+                setShowHackerMode(false); // turn off hacker mode on key up
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
     }, []);
 
     return (
@@ -21,6 +41,7 @@ const Board = () => {
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-3 sm:gap-4 place-items-center">
                 {cards.map((card, index) => (
                     <Tile
+                        showHackerMode={showHackerMode}
                         key={card.id + '-' + index}
                         card={card}
                         isFlipped={selectedCards.includes(index) || matchedCards.includes(index)}

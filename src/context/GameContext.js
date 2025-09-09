@@ -39,16 +39,16 @@ export const GameProvider = ({ children }) => {
         setGameOver(false);
         setTimer(0);
         setMoves(0);
-
-        if (intervalId) clearInterval(intervalId);
-
-        const id = setInterval(() => setTimer(prev => prev + 1), 1000);
-        setIntervalId(id);
     };
 
     const flipCard = (index) => {
         if (selectedCards.length < 2 && !selectedCards.includes(index) && !matchedCards.includes(index)) {
             setSelectedCards([...selectedCards, index]);
+
+            if (!intervalId) {
+                const id = setInterval(() => setTimer(prev => prev + 1), 1000);
+                setIntervalId(id);
+            }
         }
     };
 

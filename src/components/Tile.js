@@ -1,30 +1,7 @@
 // src/components/Tile.js
 import React, { useState, useEffect } from 'react';
 
-const Tile = ({ card, isFlipped, onClick }) => {
-    const [showHackerMode, setShowHackerMode] = useState(false);
-
-    // Listen for 'H' key down for hacker mode
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key.toLowerCase() === 'h') {
-                setShowHackerMode(true); // toggle hacker mode
-            }
-        };
-
-        const handleKeyUp = (e) => {
-            if (e.key.toLowerCase() === 'h') {
-                setShowHackerMode(false); // turn off hacker mode on key up
-            }
-        }
-
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener('keyup', handleKeyUp);
-        };
-    }, []);
+const Tile = ({ card, isFlipped, onClick, showHackerMode }) => {
 
     return (
         <div
@@ -39,17 +16,12 @@ const Tile = ({ card, isFlipped, onClick }) => {
                 <img src={card.image} alt={card.name} className="w-20 h-20 object-contain" />
             </div>
 
-            {/* Show hacker name overlay */}
-            {showHackerMode && (
-                <div className="absolute w-full h-full rounded-xl flex items-center justify-center bg-black bg-opacity-50 text-white font-bold transition-opacity duration-300">
-                    {card.name}
-                </div>
-            )}
-
             {/* Backside */}
-            {!isFlipped && !showHackerMode && (
+            {!isFlipped && (
                 <div className="absolute w-full h-full bg-gray-700 rounded-xl flex items-center justify-center">
-                    <span className="text-xl font-bold text-yellow-400">?</span>
+                    <span className="text-xl font-bold text-yellow-400">
+                        {showHackerMode ? card.name : '?'}
+                    </span>
                 </div>
             )}
         </div>
